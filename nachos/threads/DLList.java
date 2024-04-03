@@ -1,5 +1,9 @@
 package nachos.threads;  // don't change this. Gradescope needs it.
 
+/**
+ * An implementation of a doubly linked list
+ * Edited by Khai Dong (dongk@union.edu)
+ */
 public class DLList
 {
     private DLLElement first;  // pointer to first node
