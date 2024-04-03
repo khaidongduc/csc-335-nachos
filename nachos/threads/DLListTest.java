@@ -10,10 +10,10 @@ class DLListTest {
         int[] arr = {3, 5, 1, 4, 2, 6};
         DLList dlList = new DLList();
         for(int i : arr){
-            dlList.insert(i, i);
+            dlList.insert(Integer.toString(i), i);
         }
-        Integer head = (Integer) dlList.removeHead();
-        assertEquals(1, head);
+        String head = (String) dlList.removeHead();
+        assertEquals("1", head);
         assertEquals("(2 3 4 5 6)", dlList.toString());
         assertEquals(5, dlList.size());
     }
@@ -33,7 +33,7 @@ class DLListTest {
         int[] arr = {3, 5, 1, 4, 2, 6};
         DLList dlList = new DLList();
         for(int i : arr){
-            dlList.insert(i, i);
+            dlList.insert(Integer.toString(i), i);
         }
         System.out.print(dlList.toString());
         System.out.print(dlList.reverseToString());
