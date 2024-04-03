@@ -101,7 +101,7 @@ public class DLList
         builder.append('(');
         DLLElement curNode = this.first;
         while(curNode != null){
-            builder.append(curNode.data);
+            builder.append(curNode.toString());
             if(curNode != this.last) builder.append(' ');
             curNode = curNode.next;
         }
@@ -119,7 +119,7 @@ public class DLList
         builder.append('(');
         DLLElement curNode = this.last;
         while(curNode != null){
-            builder.append(curNode.data);
+            builder.append(curNode.toString());
             if(curNode != this.first) builder.append(' ');
             curNode = curNode.prev;
         }

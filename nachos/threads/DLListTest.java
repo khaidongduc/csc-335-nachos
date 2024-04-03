@@ -14,7 +14,7 @@ class DLListTest {
         }
         String head = (String) dlList.removeHead();
         assertEquals("1", head);
-        assertEquals("(2 3 4 5 6)", dlList.toString());
+        assertEquals("([2,2] [3,3] [4,4] [5,5] [6,6])", dlList.toString());
         assertEquals(5, dlList.size());
     }
 
@@ -35,11 +35,9 @@ class DLListTest {
         for(int i : arr){
             dlList.insert(Integer.toString(i), i);
         }
-        System.out.print(dlList.toString());
-        System.out.print(dlList.reverseToString());
 
-        assertEquals("(1 2 3 4 5 6)", dlList.toString());
-        assertEquals("(6 5 4 3 2 1)", dlList.reverseToString());
+        assertEquals("([1,1] [2,2] [3,3] [4,4] [5,5] [6,6])", dlList.toString());
+        assertEquals("([6,6] [5,5] [4,4] [3,3] [2,2] [1,1])", dlList.reverseToString());
         assertEquals(arr.length, dlList.size());
     }
 
