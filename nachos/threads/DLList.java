@@ -169,6 +169,20 @@ public class DLList
         // shared doubly linked list
         private static final DLList testList = new DLList();
 
+        private final String label;
+        private final int from, to, step;
+
+        DLListTest(String label, int from, int to, int step){
+            assert from >= to;
+            assert step > 0; // make sure the func will end
+            assert label != null && label.length() != 0; // make sure label is not empty or null
+
+            this.label = label;
+            this.from = from;
+            this.to = to;
+            this.step = step;
+        }
+
         /**
          * Prepends multiple nodes to a shared doubly-linked list. For each
          * integer in the range from...to (inclusive), make a string
@@ -189,19 +203,17 @@ public class DLList
          * @param step subtract this from the current integer to get to the next integer
          */
         public void countDown(String label, int from, int to, int step) {
-            // make sure the func will end
-            assert from >= to;
-            assert step > 0;
-
             for (int key = from ; key >= to ; key-= step){
                 String nodeLabel = label + key;
                 testList.insert(nodeLabel, key);
             }
+
+            KThread.yield();
         }
 
         @Override
         public void run() {
-
+            countDown(label, from, to, step);
         }
     }
 
