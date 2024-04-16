@@ -164,10 +164,10 @@ public class DLList
     }
 
 
-    private static class DLListTest implements Runnable {
+    public static class DLListTest implements Runnable {
 
         // shared doubly linked list
-        private static final DLList testList = new DLList();
+        public static final DLList testList = new DLList();
 
         private final String label;
         private final int from, to, step;
@@ -207,13 +207,12 @@ public class DLList
                 String nodeLabel = label + key;
                 testList.insert(nodeLabel, key);
             }
-
-            KThread.yield();
         }
 
         @Override
         public void run() {
             countDown(label, from, to, step);
+            KThread.yield();
         }
     }
 

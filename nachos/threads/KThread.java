@@ -459,4 +459,20 @@ public class KThread {
 			KThread.yield();
 	}
 
+	/**
+	 * Tests the shared DLList by having two threads running countdown.
+	 * One thread will insert even-numbered data from "A12" to "A2".
+	 * The other thread will insert odd-numbered data from "B11" to "B1".
+	 * Don't forget to initialize the oughtToYield array before forking.
+	 *
+	 */
+	public static void DLL_selfTest() {
+		Lib.debug(dbgThread, "Enter KThread.DLL_selfTest");
+
+		new KThread(new DLList.DLListTest("B", 11, 1, 2)).fork();
+		new DLList.DLListTest("A", 12, 1, 2).run();
+		System.out.println(DLList.DLListTest.testList);
+
+	}
+
 }
