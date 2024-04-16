@@ -162,4 +162,47 @@ public class DLList
             return "[" + key + "," + data + "]";
         }
     }
+
+
+    private static class DLListTest implements Runnable {
+
+        // shared doubly linked list
+        private static final DLList testList = new DLList();
+
+        /**
+         * Prepends multiple nodes to a shared doubly-linked list. For each
+         * integer in the range from...to (inclusive), make a string
+         * concatenating label with the integer, and prepend a new node
+         * containing that data (that's data, not key). For example,
+         * countDown("A",8,6,1) means prepend three nodes with the data
+         * "A8", "A7", and "A6" respectively. countDown("X",10,2,3) will
+         * also prepend three nodes with "X10", "X7", and "X4".
+         *
+         * This method should conditionally yield after each node is inserted.
+         * Print the list at the very end.
+         *
+         * Preconditions: from>=to and step>0
+         *
+         * @param label string that node data should start with
+         * @param from integer to start at
+         * @param to integer to end at
+         * @param step subtract this from the current integer to get to the next integer
+         */
+        public void countDown(String label, int from, int to, int step) {
+            // make sure the func will end
+            assert from >= to;
+            assert step > 0;
+
+            for (int key = from ; key >= to ; key-= step){
+                String nodeLabel = label + key;
+                testList.insert(nodeLabel, key);
+            }
+        }
+
+        @Override
+        public void run() {
+
+        }
+    }
+
 }
