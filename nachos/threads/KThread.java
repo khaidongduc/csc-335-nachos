@@ -451,8 +451,8 @@ public class KThread {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// new stuff starts here
 
-	private static boolean[] oughtToYield;
-	private static int numTimesBefore = 0;
+	public static boolean[] oughtToYield = null;
+	public static int numTimesBefore = 0;
 	public static void yieldIfOughtTo(){
 		numTimesBefore ++;
 		if (numTimesBefore < oughtToYield.length && oughtToYield[numTimesBefore])
