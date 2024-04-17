@@ -167,7 +167,7 @@ public class DLList
     public static class DLListTest implements Runnable {
 
         // shared doubly linked list
-        public static final DLList testList = new DLList();
+        public static DLList testList = new DLList();
 
         private final String label;
         private final int from, to, step;
@@ -203,10 +203,15 @@ public class DLList
          * @param step subtract this from the current integer to get to the next integer
          */
         public void countDown(String label, int from, int to, int step) {
-            for (int key = from ; key >= to ; key-= step){
-                String nodeLabel = label + key;
-                testList.insert(nodeLabel, key);
+            for (int i = from ; i >= to ; i -= step){
+                String nodeLabel = label + i;
+                testList.prepend(nodeLabel);
+                KThread.yieldIfOughtTo();
             }
+        }
+
+        public static void reset(){
+            testList = new DLList();
         }
 
         @Override

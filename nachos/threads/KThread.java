@@ -453,10 +453,13 @@ public class KThread {
 
 	public static boolean[] oughtToYield = null;
 	public static int numTimesBefore = 0;
-	public static void yieldIfOughtTo(){
-		numTimesBefore ++;
-		if (numTimesBefore < oughtToYield.length && oughtToYield[numTimesBefore])
+	public static void yieldIfOughtTo() {
+		if (numTimesBefore < oughtToYield.length && oughtToYield[numTimesBefore]){
+			numTimesBefore++;
 			KThread.yield();
+		} else {
+			numTimesBefore++;
+		}
 	}
 
 	/**
@@ -469,6 +472,32 @@ public class KThread {
 	public static void DLL_selfTest() {
 		Lib.debug(dbgThread, "Enter KThread.DLL_selfTest");
 
+		// all A nodes get appended before B nodes
+		DLList.DLListTest.reset();
+		numTimesBefore = 0;
+		oughtToYield = new boolean[]{
+				false, false, false, false, false, true,
+				false, false, false, false, false, false};
+		new KThread(new DLList.DLListTest("B", 11, 1, 2)).fork();
+		new DLList.DLListTest("A", 12, 1, 2).run();
+		System.out.println(DLList.DLListTest.testList);
+
+		// A and B node alternating
+		DLList.DLListTest.reset();
+		numTimesBefore = 0;
+		oughtToYield = new boolean[]{
+				true, true, true, true, true, true,
+				true, true, true, true, true, false};
+		new KThread(new DLList.DLListTest("B", 11, 1, 2)).fork();
+		new DLList.DLListTest("A", 12, 1, 2).run();
+		System.out.println(DLList.DLListTest.testList);
+
+		// 2 A nodes then 2 B nodes
+		DLList.DLListTest.reset();
+		numTimesBefore = 0;
+		oughtToYield = new boolean[]{
+				false, true, false, true, false, true,
+				false, true, false, true, false, false};
 		new KThread(new DLList.DLListTest("B", 11, 1, 2)).fork();
 		new DLList.DLListTest("A", 12, 1, 2).run();
 		System.out.println(DLList.DLListTest.testList);
