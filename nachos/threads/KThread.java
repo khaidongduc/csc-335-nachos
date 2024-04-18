@@ -462,6 +462,33 @@ public class KThread {
 		}
 	}
 
+	public static boolean[][] yieldData = null;
+	public static int[] yieldCount = null;
+
+	/**
+	 * Given this unique location, yield the
+	 * current thread if it ought to. It knows
+	 * to do this if yieldData[i][loc] is true, where
+	 * i is the number of times that this function
+	 * has already been called from this location.
+	 *
+	 * @param loc unique location. Every call to
+	 * yieldIfShould that you
+	 * place in your DLList code should
+	 * have a different loc number.
+	 */
+	public static void yieldIfShould(int loc) {
+		if (0 <= loc && loc < yieldCount.length && loc < yieldData.length){
+			int curCount = yieldCount[loc];
+			if (yieldData[loc] != null && 0 <= curCount && curCount <= yieldData[loc].length){
+				if (yieldData[loc][curCount]){
+					KThread.yield();
+				}
+			}
+		}
+	}
+
+
 	/**
 	 * Tests the shared DLList by having two threads running countdown.
 	 * One thread will insert even-numbered data from "A12" to "A2".
