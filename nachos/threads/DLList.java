@@ -15,7 +15,7 @@ public class DLList
      */
     public DLList() {
         this.first = this.last = null;
-        this.size =0;
+        this.size = 0;
     }
 
     /**
