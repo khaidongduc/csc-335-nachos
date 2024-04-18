@@ -25,7 +25,11 @@ public class DLList
      * If no nodes exist yet, the key will be 0.
      */
     public void prepend(Object item) {
-        int key = (this.first == null) ? 0 : this.first.key - 1;
+        int key = 0;
+        if (this.first != null){
+            KThread.yieldIfShould(1);
+            key = this.first.key - 1;
+        }
         this.insert(item, key);
     }
 
@@ -81,6 +85,8 @@ public class DLList
         DLLElement curElem = this.first;
         // traverse the list to find the correct position to put item
         while(curElem != null && curElem.key <= sortKey) curElem = curElem.next;
+
+        KThread.yieldIfShould(0);
         if(curElem == null){
             this.last.next = newElem;
             newElem.prev = this.last;

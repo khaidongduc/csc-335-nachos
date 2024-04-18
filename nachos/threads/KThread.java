@@ -478,12 +478,16 @@ public class KThread {
 	 * have a different loc number.
 	 */
 	public static void yieldIfShould(int loc) {
+		if (yieldCount == null || yieldData == null)
+			return;
 		if (0 <= loc && loc < yieldCount.length && loc < yieldData.length){
 			int curCount = yieldCount[loc];
 			if (yieldData[loc] != null && 0 <= curCount && curCount <= yieldData[loc].length){
+				yieldCount[loc] += 1;
 				if (yieldData[loc][curCount]){
 					KThread.yield();
 				}
+
 			}
 		}
 	}
@@ -529,6 +533,47 @@ public class KThread {
 		new DLList.DLListTest("A", 12, 1, 2).run();
 		System.out.println(DLList.DLListTest.testList);
 
+	}
+
+	public static void DLL_selfTest2(){
+		Lib.debug(dbgThread, "Enter KThread.DLL_selfTest2");
+		DLList testList = new DLList();
+
+		testList.insert(1, 1);
+		testList.insert(6, 6);
+
+		yieldCount = new int[]{0};
+		yieldData = new boolean[][]{
+				new boolean[] {true, false}
+		};
+		new KThread(() -> {
+			testList.insert(4, 4);
+			KThread.yield();
+		}).fork();
+		testList.insert(3, 3);
+		System.out.println(testList);
+	}
+
+	public static void DLL_selfTest3(){
+		Lib.debug(dbgThread, "Enter KThread.DLL_selfTest2");
+		DLList testList = new DLList();
+
+		testList.insert(1, 1);
+
+		yieldCount = new int[]{0, 0};
+		yieldData = new boolean[][]{
+				null,
+				new boolean[] {true, false}
+		};
+		new KThread(() -> {
+			testList.removeHead();
+			KThread.yield();
+		}).fork();
+		try {
+			testList.prepend(-1);
+		} catch (NullPointerException e){
+			System.out.println("Catch a NullPointerException, as desired");
+		}
 	}
 
 }
