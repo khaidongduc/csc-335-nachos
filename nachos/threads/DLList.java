@@ -84,7 +84,8 @@ public class DLList
         }
         DLLElement curElem = this.first;
         // traverse the list to find the correct position to put item
-        while(curElem != null && curElem.key <= sortKey) curElem = curElem.next;
+        while(curElem != null && curElem.key <= sortKey)
+            curElem = curElem.next;
 
         KThread.yieldIfShould(0);
         if(curElem == null){
