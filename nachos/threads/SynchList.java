@@ -50,6 +50,13 @@ public class SynchList {
 	return o;
     }
 
+	public boolean isEmpty(){
+		lock.acquire();
+		boolean res = list.isEmpty();
+		lock.release();
+		return res;
+	}
+
     private static class PingTest implements Runnable {
 	PingTest(SynchList ping, SynchList pong) {
 	    this.ping = ping;
