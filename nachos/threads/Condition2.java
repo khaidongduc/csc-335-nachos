@@ -1,6 +1,7 @@
 package nachos.threads;
 
-import nachos.machine.*;
+import nachos.machine.Lib;
+import nachos.machine.Machine;
 
 /**
  * An implementation of condition variables that disables interrupt()s for
@@ -21,7 +22,8 @@ public class Condition2 {
      *				<tt>wake()</tt>, or <tt>wakeAll()</tt>.
      */
     public Condition2(Lock conditionLock) {
-	this.conditionLock = conditionLock;
+        this.conditionLock = conditionLock;
+        this.waitQueue = new SynchList();
     }
 
     /**
@@ -31,11 +33,14 @@ public class Condition2 {
      * automatically reacquire the lock before <tt>sleep()</tt> returns.
      */
     public void sleep() {
-	Lib.assertTrue(conditionLock.isHeldByCurrentThread());
+        Lib.assertTrue(conditionLock.isHeldByCurrentThread());
 
-	conditionLock.release();
-
-	conditionLock.acquire();
+        conditionLock.release(); // release the lock
+        boolean intStatus = Machine.interrupt().disable(); // disable interrupts
+        waitQueue.add(KThread.currentThread()); // put current thread into the wait queue
+        KThread.sleep(); // block current thread
+        Machine.interrupt().restore(intStatus); // restore interrupts
+        conditionLock.acquire(); //  reacquire the lock
     }
 
     /**
@@ -43,7 +48,13 @@ public class Condition2 {
      * current thread must hold the associated lock.
      */
     public void wake() {
-	Lib.assertTrue(conditionLock.isHeldByCurrentThread());
+        Lib.assertTrue(conditionLock.isHeldByCurrentThread());
+        if (!waitQueue.isEmpty()) {
+            boolean intStatus = Machine.interrupt().disable(); // disable interrupts
+            KThread nextThread = (KThread) waitQueue.removeFirst();
+            nextThread.ready(); // make the next thread wake up
+            Machine.interrupt().restore(intStatus); // restore interrupts
+        }
     }
 
     /**
@@ -51,8 +62,15 @@ public class Condition2 {
      * thread must hold the associated lock.
      */
     public void wakeAll() {
-	Lib.assertTrue(conditionLock.isHeldByCurrentThread());
+    	Lib.assertTrue(conditionLock.isHeldByCurrentThread());
+        while(!waitQueue.isEmpty()) {
+            // already disable interrupt while waking a thread in wake()
+            wake();
+        }
     }
 
     private Lock conditionLock;
+
+    private SynchList waitQueue;
+
 }
