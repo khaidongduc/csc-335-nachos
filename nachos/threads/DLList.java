@@ -10,12 +10,18 @@ public class DLList
     private DLLElement last;   // pointer to last node
     private int size;          // number of nodes in list
 
+    // synchronized
+    private Lock lock;
+
+
     /**
      * Creates an empty sorted doubly-linked list.
      */
     public DLList() {
         this.first = this.last = null;
         this.size = 0;
+
+        this.lock = new Lock();
     }
 
     /**
@@ -25,6 +31,8 @@ public class DLList
      * If no nodes exist yet, the key will be 0.
      */
     public void prepend(Object item) {
+        lock.acquire();
+
         int key = 0;
         if (this.first != null){
             KThread.yieldIfShould(1);
@@ -40,9 +48,13 @@ public class DLList
      * @return the data stored at the head of the list or null if list empty
      */
     public Object removeHead() {
+        lock.acquire();
+
         if(this.first == null) {
+            lock.release();
             return null;
         }
+
         Object returnData = this.first.data;
         -- this.size; // decrement the size
         this.first = this.first.next; // update new head
@@ -51,6 +63,8 @@ public class DLList
         } else {
             this.first.prev = null; // update previous of the current head
         }
+
+        lock.release();
         return returnData;
     }
 
@@ -76,10 +90,14 @@ public class DLList
      * Inserts item into the list in sorted order according to sortKey.
      */
     public void insert(Object item, Integer sortKey) {
+        if(!lock.isHeldByCurrentThread())
+            this.lock.acquire();
+
         ++ this.size; // increment size counter
         DLLElement newElem = new DLLElement(item, sortKey);
         if(this.first == null){
             this.first = this.last = newElem;
+            this.lock.release();
             return;
         }
         DLLElement curElem = this.first;
@@ -99,6 +117,8 @@ public class DLList
             if (newElem.prev == null) this.first = newElem;
             else newElem.prev.next = newElem;
         }
+
+        this.lock.release();
     }
 
 
@@ -110,12 +130,16 @@ public class DLList
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append('(');
+
+        this.lock.acquire();
         DLLElement curNode = this.first;
         while(curNode != null){
             builder.append(curNode.toString());
             if(curNode != this.last) builder.append(' ');
             curNode = curNode.next;
         }
+        this.lock.release();
+
         builder.append(')');
         return builder.toString();
     }
@@ -128,12 +152,16 @@ public class DLList
     public String reverseToString(){
         StringBuilder builder = new StringBuilder();
         builder.append('(');
+
+        this.lock.acquire();
         DLLElement curNode = this.last;
         while(curNode != null){
             builder.append(curNode.toString());
             if(curNode != this.first) builder.append(' ');
             curNode = curNode.prev;
         }
+        this.lock.release();
+
         builder.append(')');
         return builder.toString();
     }

@@ -571,6 +571,7 @@ public class KThread {
 		}).fork();
 		try {
 			testList.prepend(-1);
+			System.out.println(testList);
 		} catch (NullPointerException e){
 			System.out.println("Catch a NullPointerException, as desired");
 		}
