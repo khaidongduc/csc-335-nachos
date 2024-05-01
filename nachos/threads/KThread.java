@@ -577,4 +577,22 @@ public class KThread {
 		}
 	}
 
+	public static void DLL_selfTest4(){
+		Lib.debug(dbgThread, "Enter KThread.DLL_selfTest4");
+		DLList testList = new DLList();
+
+		yieldCount = null;
+		yieldData = null;
+		new KThread(() -> {
+			testList.insert(1, 1);
+			KThread.yield();
+		}).fork();
+
+		Integer i = (Integer) testList.removeHead();
+		System.out.println("remove (1, 1) after waiting");
+		System.out.println(i);
+		System.out.println(testList);
+
+	}
+
 }

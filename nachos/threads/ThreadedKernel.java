@@ -51,6 +51,7 @@ public class ThreadedKernel extends Kernel {
     KThread.DLL_selfTest();
     KThread.DLL_selfTest2();
     KThread.DLL_selfTest3();
+    KThread.DLL_selfTest4();
 
 	Semaphore.selfTest();
 	SynchList.selfTest();

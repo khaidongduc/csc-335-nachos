@@ -49,7 +49,7 @@ public class DLList
      * underflow is prevented (i.e. removeHead will now always remove
      * something instead of ever returning null
      *
-     * @return the data stored at the head of the list or null if list empty
+     * @return the data stored at the head of the list, sleep until list has something
      */
     public Object removeHead() {
 
