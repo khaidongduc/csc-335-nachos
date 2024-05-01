@@ -69,7 +69,8 @@ public class KThread {
 	this.target = target;
     }
 
-    /**
+
+	/**
      * Set the target of this thread.
      *
      * @param	target	the object whose <tt>run</tt> method is called.
@@ -594,5 +595,24 @@ public class KThread {
 		System.out.println(testList);
 
 	}
+
+	public static void BoundedBuffer_selfTest1() {
+		BoundedBuffer buffer = new BoundedBuffer(1);
+		new KThread(() -> buffer.write('a')).fork();
+		char c = buffer.read();
+		assert c == 'a';
+		System.out.println(c);
+		buffer.print();
+	}
+
+	public static void BoundedBuffer_selfTest2() {
+		BoundedBuffer buffer = new BoundedBuffer(1);
+		buffer.write('a');
+
+		new KThread(() -> System.out.println(buffer.read())).fork();
+		buffer.write('b');
+		buffer.print();
+	}
+
 
 }

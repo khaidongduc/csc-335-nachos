@@ -46,13 +46,20 @@ public class ThreadedKernel extends Kernel {
      * tests here.
      */	
     public void selfTest() {
+    System.out.println("KThread.selfTest() ...");
 	KThread.selfTest();
 
+    System.out.println("KThread.DLL_selfTest() ...");
     KThread.DLL_selfTest();
     KThread.DLL_selfTest2();
     KThread.DLL_selfTest3();
     KThread.DLL_selfTest4();
 
+    System.out.println("KThread.BoundedBufferTest() ...");
+    KThread.BoundedBuffer_selfTest1();
+    KThread.BoundedBuffer_selfTest2();
+
+    System.out.println("Other tests ...");
 	Semaphore.selfTest();
 	SynchList.selfTest();
 	if (Machine.bank() != null) {
