@@ -12,6 +12,7 @@ public class DLList
 
     // synchronized
     private Lock lock;
+    private Condition empty;
 
 
     /**
@@ -22,6 +23,7 @@ public class DLList
         this.size = 0;
 
         this.lock = new Lock();
+        this.empty = new Condition(this.lock);
     }
 
     /**
@@ -43,16 +45,17 @@ public class DLList
 
     /**
      * Removes the head of the list and returns the data item stored in
-     * it.  Returns null if no nodes exist.
+     * it.
+     * underflow is prevented (i.e. removeHead will now always remove
+     * something instead of ever returning null
      *
      * @return the data stored at the head of the list or null if list empty
      */
     public Object removeHead() {
-        lock.acquire();
 
-        if(this.first == null) {
-            lock.release();
-            return null;
+        lock.acquire();
+        while(this.first == null) {
+            this.empty.sleep();
         }
 
         Object returnData = this.first.data;
@@ -97,6 +100,8 @@ public class DLList
         DLLElement newElem = new DLLElement(item, sortKey);
         if(this.first == null){
             this.first = this.last = newElem;
+
+            this.empty.wake();
             this.lock.release();
             return;
         }
@@ -117,7 +122,7 @@ public class DLList
             if (newElem.prev == null) this.first = newElem;
             else newElem.prev.next = newElem;
         }
-
+        this.empty.wake();
         this.lock.release();
     }
 
