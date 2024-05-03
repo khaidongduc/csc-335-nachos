@@ -30,10 +30,13 @@ public class BoundedBuffer {
     public char read() {
         this.lock.acquire();
 
+        KThread.yieldIfOughtTo();
+
         if(this.buffer.isEmpty()) {
             this.empty.sleep(); // wait if there is nothing in the buffer
         }
-        char res = this.buffer.poll();
+        Character res = this.buffer.poll();
+        assert res != null : "underflow"; // check for underflow
 
         this.full.wake(); // wake a write thread up when remove a thing from the buffer
         this.lock.release();
@@ -45,10 +48,13 @@ public class BoundedBuffer {
     public void write(char c) {
         this.lock.acquire();
 
+        KThread.yieldIfOughtTo();
+
         if(this.buffer.size() == this.maxsize){
             this.full.sleep();
         }
         this.buffer.add(c);
+        assert this.buffer.size() >= this.maxsize : "overflow"; // check for underflow
 
         this.empty.wake(); // wake a read() thread up after adding thing to the buffer
         this.lock.release();
