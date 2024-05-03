@@ -73,7 +73,8 @@ then run them. For this test, since there is no exact order, I just expect all r
 all the added characters. I used a `synchronizedList` to accumulate all the characters, then sequentially `read()` everything out of the buffer
 at the end. Also check for underflow and overflow in this test since assertions are built into `BoundedBuffer`.
 
-The tests run correctly.
+The tests run correctly. Since there is no interleaving that could cause problem (besides starvation), there is no interleaving diagram. The assertions
+should already account for potential errors that may arise.
 
 ### Part 3: `Condition2` Implementation
 
