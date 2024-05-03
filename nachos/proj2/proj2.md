@@ -77,3 +77,22 @@ The tests run correctly.
 
 ### Part 3: `Condition2` Implementation
 
+Changing from `Condition` to `Condition2` gives the same output.
+
+```agsl
+KThread.DLL_selfTest() ...
+([-11,B1] [-10,B3] [-9,B5] [-8,B7] [-7,B9] [-6,B11] [-5,A2] [-4,A4] [-3,A6] [-2,A8] [-1,A10] [0,A12])
+([-11,B1] [-10,A2] [-9,B3] [-8,A4] [-7,B5] [-6,A6] [-5,B7] [-4,A8] [-3,B9] [-2,A10] [-1,B11] [0,A12])
+([-11,B1] [-10,A2] [-9,B3] [-8,B5] [-7,A4] [-6,A6] [-5,B7] [-4,A8] [-3,B9] [-2,B11] [-1,A10] [0,A12])
+([1,1] [3,3] [4,4] [6,6])
+([1,1])
+remove (1, 1) after waiting
+1
+()
+KThread.BoundedBufferTest() ...
+a
+[]
+a
+[b]
+Other tests ...
+```

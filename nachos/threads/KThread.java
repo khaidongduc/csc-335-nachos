@@ -621,6 +621,9 @@ public class KThread {
 		}).fork();
 		buffer.write('b');
 		buffer.print();
+
+		assert buffer.read() == 'b';
+		assert buffer.isEmpty();
 	}
 
 	public static void BoundedBuffer_selfTestConcurrency() {
