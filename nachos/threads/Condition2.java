@@ -51,8 +51,7 @@ public class Condition2 {
         Lib.assertTrue(conditionLock.isHeldByCurrentThread());
         if (!waitQueue.isEmpty()) {
             boolean intStatus = Machine.interrupt().disable(); // disable interrupts
-            KThread nextThread = (KThread) waitQueue.removeFirst();
-            nextThread.ready(); // make the next thread wake up
+            ((KThread) waitQueue.removeFirst()).ready(); // dispatch thread from the wait queue
             Machine.interrupt().restore(intStatus); // restore interrupts
         }
     }
@@ -63,10 +62,11 @@ public class Condition2 {
      */
     public void wakeAll() {
     	Lib.assertTrue(conditionLock.isHeldByCurrentThread());
+        boolean intStatus = Machine.interrupt().disable(); // disable interrupts
         while(!waitQueue.isEmpty()) {
-            // already disable interrupt while waking a thread in wake()
-            wake();
+            ((KThread) waitQueue.removeFirst()).ready(); // dispatch thread from the wait queue
         }
+        Machine.interrupt().restore(intStatus); // restore interrupts
     }
 
     private Lock conditionLock;
