@@ -6,13 +6,12 @@ import java.util.Queue;
 public class BoundedBuffer {
 
     private final int maxsize;
-    private int count;
     Queue<Character> buffer;
 
     // synchronized
     private final Lock lock;
-    private final Condition empty; // whether the buffer is empty
-    private final Condition full; // whether the buffer is full
+    private final Condition2 empty; // whether the buffer is empty
+    private final Condition2 full; // whether the buffer is full
 
     // non-default constructor with a fixed size
     public BoundedBuffer(int maxsize) {
@@ -20,8 +19,8 @@ public class BoundedBuffer {
         this.buffer = new ArrayDeque<>(maxsize);
 
         this.lock = new Lock();
-        this.empty = new Condition(this.lock);
-        this.full = new Condition(this.lock);
+        this.empty = new Condition2(this.lock);
+        this.full = new Condition2(this.lock);
 
     }
 

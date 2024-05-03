@@ -12,7 +12,7 @@ public class DLList
 
     // synchronized
     private Lock lock;
-    private Condition empty;
+    private Condition2 empty;
 
 
     /**
@@ -23,7 +23,7 @@ public class DLList
         this.size = 0;
 
         this.lock = new Lock();
-        this.empty = new Condition(this.lock);
+        this.empty = new Condition2(this.lock);
     }
 
     /**
