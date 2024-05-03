@@ -2,6 +2,8 @@ package nachos.threads;
 
 import nachos.machine.*;
 
+import java.util.Arrays;
+
 /**
  * A KThread is a thread that can be used to execute Nachos kernel code. Nachos
  * allows multiple threads to run concurrently.
@@ -596,7 +598,9 @@ public class KThread {
 
 	}
 
-	public static void BoundedBuffer_selfTest1() {
+	public static void BoundedBuffer_selfTestUnderflow() {
+		Lib.debug(dbgThread, "Enter KThread.BoundedBuffer_selfTestUnderflow");
+
 		BoundedBuffer buffer = new BoundedBuffer(1);
 		new KThread(() -> buffer.write('a')).fork();
 		char c = buffer.read();
@@ -605,12 +609,45 @@ public class KThread {
 		buffer.print();
 	}
 
-	public static void BoundedBuffer_selfTest2() {
+	public static void BoundedBuffer_selfTestOverflow() {
+		Lib.debug(dbgThread, "Enter KThread.BoundedBuffer_selfTestOverflow");
 		BoundedBuffer buffer = new BoundedBuffer(1);
 		buffer.write('a');
 
 		new KThread(() -> System.out.println(buffer.read())).fork();
 		buffer.write('b');
+		buffer.print();
+	}
+
+	public static void BoundedBuffer_selfTestConcurrency() {
+		Lib.debug(dbgThread, "Enter KThread.BoundedBuffer_selfTestConcurrency");
+
+		oughtToYield = new boolean[50];
+		Arrays.fill(oughtToYield, true);
+
+		BoundedBuffer buffer = new BoundedBuffer(10);
+		buffer.write('a');
+
+		new KThread(() -> buffer.write('a')).fork();
+		new KThread(() -> buffer.write('c')).fork();
+		new KThread(() -> buffer.write('b')).fork();
+		new KThread(() -> buffer.write('w')).fork();
+
+		new KThread(buffer::read).fork();
+		new KThread(buffer::read).fork();
+		new KThread(buffer::read).fork();
+		new KThread(buffer::read).fork();
+		new KThread(buffer::read).fork();
+		new KThread(buffer::read).fork();
+
+		new KThread(() -> buffer.write('a')).fork();
+		new KThread(() -> buffer.write('c')).fork();
+		new KThread(() -> buffer.write('b')).fork();
+		new KThread(() -> buffer.write('w')).fork();
+
+		new KThread(buffer::read).fork();
+		new KThread(buffer::read).fork();
+
 		buffer.print();
 	}
 

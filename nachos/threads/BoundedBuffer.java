@@ -38,6 +38,8 @@ public class BoundedBuffer {
         Character res = this.buffer.poll();
         assert res != null : "underflow"; // check for underflow
 
+        KThread.yieldIfOughtTo();
+
         this.full.wake(); // wake a write thread up when remove a thing from the buffer
         this.lock.release();
         return res;
@@ -53,6 +55,9 @@ public class BoundedBuffer {
         if(this.buffer.size() == this.maxsize){
             this.full.sleep();
         }
+
+        KThread.yieldIfOughtTo();
+
         this.buffer.add(c);
         assert this.buffer.size() >= this.maxsize : "overflow"; // check for underflow
 

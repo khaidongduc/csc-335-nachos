@@ -56,8 +56,9 @@ public class ThreadedKernel extends Kernel {
     KThread.DLL_selfTest4();
 
     System.out.println("KThread.BoundedBufferTest() ...");
-    KThread.BoundedBuffer_selfTest1();
-    KThread.BoundedBuffer_selfTest2();
+    KThread.BoundedBuffer_selfTestUnderflow();
+    KThread.BoundedBuffer_selfTestOverflow();
+    KThread.BoundedBuffer_selfTestConcurrency();
 
     System.out.println("Other tests ...");
 	Semaphore.selfTest();
