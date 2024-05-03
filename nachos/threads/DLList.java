@@ -41,6 +41,7 @@ public class DLList
             key = this.first.key - 1;
         }
         this.insert(item, key);
+        // lock get released by insert(...)
     }
 
     /**
@@ -77,7 +78,12 @@ public class DLList
      * @return true iff the list is empty.
      */
     public boolean isEmpty() {
-        return this.size == 0;
+        lock.acquire();
+        boolean res = this.size == 0;
+        lock.release();
+        return res;
+
+
     }
 
     /**
@@ -85,7 +91,10 @@ public class DLList
      * @return
      */
     public int size(){
-        return this.size;
+        lock.acquire();
+        int res = this.size;
+        lock.release();
+        return res;
     }
 
 
