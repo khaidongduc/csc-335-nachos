@@ -59,5 +59,21 @@ the 2 tests from project 1, there are no longer a `NullExceptionPointer` nor an 
 
 ### Part 2: Bounder Buffer
 
+I implemented `BoundedBuffer` with several `KThread.yieldIfOughtTo()` within the `read()` and `write()` code to see if constant context switching would cause
+problems. Inside of `read` and `write`, there are also assertion to check for underflow and overflow. I made 3 tests to test `Bounded Buffer`.
+
+- `BoundedBuffer_selfTestUnderflow`: First fork a `write` thread, then having a thread try to `read()` when the buffer is empty. 
+The `read` thread will block itself, allow the `write` thread to run, then the `read` thread will print out the character. Expect
+no `AssertionError` and the correct character get printed out (also get asserted).
+- `BoundedBuffer_selfTestOverflow`: First set up a buffer with a capacity of 1, then fill it with a character. Then, fork
+a `read` thread and run a `write` thread. Assert if `read` gives the right character. Expect no `AssertionError` (no overflow, underflow, nor invalid output).
+The read character also get printed out.
+- `BoundedBuffer_selfTestConcurrency`: First set `Kthread.oughtToYield` to a sufficient long list of `True`. Then, fork several `read` and `write` threads
+then run them. For this test, since there is no exact order, I just expect all read values and the values remaining in the buffer added up to
+all the added characters. I used a `synchronizedList` to accumulate all the characters, then sequentially `read()` everything out of the buffer
+at the end. Also check for underflow and overflow in this test since assertions are built into `BoundedBuffer`.
+
+The tests run correctly.
+
 ### Part 3: `Condition2` Implementation
 

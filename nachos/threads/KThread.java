@@ -2,7 +2,7 @@ package nachos.threads;
 
 import nachos.machine.*;
 
-import java.util.Arrays;
+import java.util.*;
 
 /**
  * A KThread is a thread that can be used to execute Nachos kernel code. Nachos
@@ -614,7 +614,11 @@ public class KThread {
 		BoundedBuffer buffer = new BoundedBuffer(1);
 		buffer.write('a');
 
-		new KThread(() -> System.out.println(buffer.read())).fork();
+		new KThread(() -> {
+			char c = buffer.read();
+			assert c == 'a';
+			System.out.println(c);
+		}).fork();
 		buffer.write('b');
 		buffer.print();
 	}
@@ -624,31 +628,43 @@ public class KThread {
 
 		oughtToYield = new boolean[50];
 		Arrays.fill(oughtToYield, true);
+		List<Character> accum = Collections.synchronizedList(new ArrayList<>());
 
 		BoundedBuffer buffer = new BoundedBuffer(10);
-		buffer.write('a');
 
 		new KThread(() -> buffer.write('a')).fork();
 		new KThread(() -> buffer.write('c')).fork();
 		new KThread(() -> buffer.write('b')).fork();
 		new KThread(() -> buffer.write('w')).fork();
 
-		new KThread(buffer::read).fork();
-		new KThread(buffer::read).fork();
-		new KThread(buffer::read).fork();
-		new KThread(buffer::read).fork();
-		new KThread(buffer::read).fork();
-		new KThread(buffer::read).fork();
+		new KThread(() -> accum.add(buffer.read())).fork();
+		new KThread(() -> accum.add(buffer.read())).fork();
+		new KThread(() -> accum.add(buffer.read())).fork();
+		new KThread(() -> accum.add(buffer.read())).fork();
+		new KThread(() -> accum.add(buffer.read())).fork();
+		new KThread(() -> accum.add(buffer.read())).fork();
 
 		new KThread(() -> buffer.write('a')).fork();
 		new KThread(() -> buffer.write('c')).fork();
 		new KThread(() -> buffer.write('b')).fork();
 		new KThread(() -> buffer.write('w')).fork();
+		new KThread(() -> buffer.write('c')).fork();
+		new KThread(() -> buffer.write('b')).fork();
 
-		new KThread(buffer::read).fork();
-		new KThread(buffer::read).fork();
+		new KThread(() -> accum.add(buffer.read())).fork();
+		new KThread(() -> accum.add(buffer.read())).fork();
+		new KThread(() -> accum.add(buffer.read())).fork();
+		new KThread(() -> accum.add(buffer.read())).fork();
 
-		buffer.print();
+
+		buffer.write('a'); // set off all the other thread
+		while (!buffer.isEmpty()) accum.add(buffer.read());
+
+		assert Collections.frequency(accum, 'a') == 3;
+		assert Collections.frequency(accum, 'b') == 3;
+		assert Collections.frequency(accum, 'c') == 3;
+		assert Collections.frequency(accum, 'w') == 2;
+
 	}
 
 

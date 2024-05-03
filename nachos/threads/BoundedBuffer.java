@@ -73,4 +73,11 @@ public class BoundedBuffer {
         System.out.println(res);
     }
 
+    public boolean isEmpty(){
+        lock.acquire();
+        boolean res = this.buffer.isEmpty();
+        lock.release();
+        return res;
+    }
+
 }
