@@ -5,6 +5,7 @@ import nachos.threads.*;
 import nachos.userprog.*;
 
 import java.io.EOFException;
+import java.util.Arrays;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -321,7 +322,10 @@ public class UserProcess {
 	    return false;
 	}
 
-	// load sections
+	System.out.println("Allocated " + numPages + " frames to current process");
+	System.out.println("Got frames" + Arrays.toString(requestedFrames));
+
+		// load sections
 	pageTable = new TranslationEntry[numPages];
 	for(int i = 0 ; i < numPages ; ++ i){
 		// assuming pageTable[i].vpn == i anywhere

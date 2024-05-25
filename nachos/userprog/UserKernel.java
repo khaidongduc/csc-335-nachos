@@ -38,8 +38,11 @@ public class UserKernel extends ThreadedKernel {
 	    });
 
 	int numPhysPages = Machine.processor().getNumPhysPages(); // number of physical frames
-		// propagate this.freeFrames with {1, 2, ..., <numPhysPages>}
-	freeFrames = IntStream.range(0, numPhysPages).boxed().collect(Collectors.toCollection(TreeSet::new));
+		// propagate this.freeFrames with {0, 2, ..., <numPhysPages> - 1}
+	freeFrames = new TreeSet<>();
+	for(int i = 0 ; i < numPhysPages ; ++ i){
+		freeFrames.add(i);
+	}
 	freeFrameLock = new Lock();
     }
 
@@ -147,7 +150,7 @@ public class UserKernel extends ThreadedKernel {
 		}
 		int[] res = new int[requested];
 		for (int i = 0 ; i < requested; ++ i) {
-			Integer frame = freeFrames.pollFirst();
+			Integer frame = freeFrames.pollLast();
 			assert frame != null;
 			res[i] = frame;
 		}
