@@ -177,7 +177,7 @@ public class CoffSection {
 	Lib.assertTrue(file != null);
 
 	Lib.assertTrue(spn>=0 && spn<numPages);
-	Lib.assertTrue(ppn>=0 && ppn<Machine.processor().getNumPhysPages());
+	Lib.assertTrue(ppn>=0 && ppn<	Machine.processor().getNumPhysPages());
 
 	int pageSize = Processor.pageSize;
 	byte[] memory = Machine.processor().getMemory();
