@@ -4,6 +4,14 @@ import nachos.machine.*;
 import nachos.threads.*;
 import nachos.userprog.*;
 
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 /**
  * A kernel that can support multiple user processes.
  */
@@ -12,7 +20,7 @@ public class UserKernel extends ThreadedKernel {
      * Allocate a new user kernel.
      */
     public UserKernel() {
-	super();
+		super();
     }
 
     /**
@@ -27,6 +35,10 @@ public class UserKernel extends ThreadedKernel {
 	Machine.processor().setExceptionHandler(new Runnable() {
 		public void run() { exceptionHandler(); }
 	    });
+
+	int numPhysPages = Machine.processor().getNumPhysPages(); // number of physical frames
+		// propagate this.freeFrames with {1, 2, ..., <numPhysPages>}
+	this.freeFrames = IntStream.range(0, numPhysPages).boxed().collect(Collectors.toCollection(LinkedList::new));
     }
 
     /**
@@ -112,4 +124,7 @@ public class UserKernel extends ThreadedKernel {
 
     // dummy variables to make javac smarter
     private static Coff dummy1 = null;
+
+	private Collection<Integer> freeFrames;
+
 }
