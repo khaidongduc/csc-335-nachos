@@ -141,8 +141,10 @@ public class UserKernel extends ThreadedKernel {
 		freeFrameLock.acquire();
 
 		int numAvailableFrames = freeFrames.size();
-		if(numAvailableFrames < requested)
+		if(numAvailableFrames < requested) {
+			freeFrameLock.release();
 			return null;
+		}
 		int[] res = new int[requested];
 		for (int i = 0 ; i < requested; ++ i) {
 			Integer frame = freeFrames.pollFirst();
