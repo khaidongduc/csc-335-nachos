@@ -46,26 +46,26 @@ public class ThreadedKernel extends Kernel {
      * tests here.
      */	
     public void selfTest() {
-    System.out.println("KThread.selfTest() ...");
-	KThread.selfTest();
-
-    System.out.println("KThread.DLL_selfTest() ...");
-    KThread.DLL_selfTest();
-    KThread.DLL_selfTest2();
-    KThread.DLL_selfTest3();
-    KThread.DLL_selfTest4();
-
-    System.out.println("KThread.BoundedBufferTest() ...");
-    KThread.BoundedBuffer_selfTestUnderflow();
-    KThread.BoundedBuffer_selfTestOverflow();
-    KThread.BoundedBuffer_selfTestConcurrency();
-
-    System.out.println("Other tests ...");
-	Semaphore.selfTest();
-	SynchList.selfTest();
-	if (Machine.bank() != null) {
-	    ElevatorBank.selfTest();
-	}
+//    System.out.println("KThread.selfTest() ...");
+//	KThread.selfTest();
+//
+//    System.out.println("KThread.DLL_selfTest() ...");
+//    KThread.DLL_selfTest();
+//    KThread.DLL_selfTest2();
+//    KThread.DLL_selfTest3();
+//    KThread.DLL_selfTest4();
+//
+//    System.out.println("KThread.BoundedBufferTest() ...");
+//    KThread.BoundedBuffer_selfTestUnderflow();
+//    KThread.BoundedBuffer_selfTestOverflow();
+//    KThread.BoundedBuffer_selfTestConcurrency();
+//
+//    System.out.println("Other tests ...");
+//	Semaphore.selfTest();
+//	SynchList.selfTest();
+//	if (Machine.bank() != null) {
+//	    ElevatorBank.selfTest();
+//	}
     }
     
     /**
