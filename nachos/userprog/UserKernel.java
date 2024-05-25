@@ -1,5 +1,6 @@
 package nachos.userprog;
 
+import com.sun.source.tree.Tree;
 import nachos.machine.*;
 import nachos.threads.*;
 import nachos.userprog.*;
@@ -38,7 +39,8 @@ public class UserKernel extends ThreadedKernel {
 
 	int numPhysPages = Machine.processor().getNumPhysPages(); // number of physical frames
 		// propagate this.freeFrames with {1, 2, ..., <numPhysPages>}
-	this.freeFrames = IntStream.range(0, numPhysPages).boxed().collect(Collectors.toCollection(LinkedList::new));
+	freeFrames = IntStream.range(0, numPhysPages).boxed().collect(Collectors.toCollection(TreeSet::new));
+	freeFrameLock = new Lock();
     }
 
     /**
@@ -125,6 +127,43 @@ public class UserKernel extends ThreadedKernel {
     // dummy variables to make javac smarter
     private static Coff dummy1 = null;
 
-	private Collection<Integer> freeFrames;
+	///////////////////////////////////////////////////////////////////////////
+
+	private static TreeSet<Integer> freeFrames;
+	private static Lock freeFrameLock;
+
+	/**
+	 * return a list of <requested> free frame numbers that can be used for a process
+	 * @param requested number of free frames requested
+	 * @return array of frame numbers that the process can use or null
+	 * if request cannot be fulfilled */
+	public static int[] allocatePages(int requested) {
+		freeFrameLock.acquire();
+
+		int numAvailableFrames = freeFrames.size();
+		if(numAvailableFrames < requested)
+			return null;
+		int[] res = new int[requested];
+		for (int i = 0 ; i < requested; ++ i) {
+			Integer frame = freeFrames.pollFirst();
+			assert frame != null;
+			res[i] = frame;
+		}
+
+		freeFrameLock.release();
+		return res;
+	}
+
+	/**
+	 * put frameNumber back in the free frames list
+ 	 */
+	public static void releasePage(int frameNumber){
+		freeFrameLock.acquire();
+
+		assert !freeFrames.contains(frameNumber);
+		freeFrames.add(frameNumber);
+
+		freeFrameLock.release();
+	}
 
 }
