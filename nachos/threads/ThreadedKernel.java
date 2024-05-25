@@ -76,7 +76,8 @@ public class ThreadedKernel extends Kernel {
     }
 
     /**
-     * Terminate this kernel. Never returns.
+     * Terminate this kernel. Never returns.System.out.println("Allocated " + numPages + " frames to current process");
+     *
      */
     public void terminate() {
 	Machine.halt();
