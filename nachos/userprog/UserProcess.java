@@ -429,6 +429,12 @@ public class UserProcess {
 		return length;
 	}
 
+	private int handleExit(){
+		unloadSections();
+		Kernel.kernel.terminate();
+		return 0;
+	}
+
 
     private static final int
         syscallHalt = 0,
@@ -478,6 +484,8 @@ public class UserProcess {
 		return handleWrite(a0, a1, a2);
 	case syscallRead:
 		return handleRead(a0, a1, a2);
+	case syscallExit:
+		return handleExit();
 	default:
 	    Lib.debug(dbgProcess, "Unknown syscall " + syscall);
 	    Lib.assertNotReached("Unknown system call!");
@@ -485,7 +493,7 @@ public class UserProcess {
 	return 0;
     }
 
-    /**
+    /**g
      * Handle a user exception. Called by
      * <tt>UserKernel.exceptionHandler()</tt>. The
      * <i>cause</i> argument identifies which exception occurred; see the
