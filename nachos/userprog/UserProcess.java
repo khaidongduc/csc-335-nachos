@@ -26,10 +26,10 @@ public class UserProcess {
      * Allocate a new process.
      */
     public UserProcess() {
-	int numPhysPages = Machine.processor().getNumPhysPages();
-	pageTable = new TranslationEntry[numPhysPages];
-	for (int i=0; i<numPhysPages; i++)
-	    pageTable[i] = new TranslationEntry(i,i, true,false,false,false);
+//	int numPhysPages = Machine.processor().getNumPhysPages();
+//	pageTable = new TranslationEntry[numPhysPages];
+//	for (int i=0; i<numPhysPages; i++)
+//	    pageTable[i] = new TranslationEntry(i,i, true,false,false,false);
     }
     
     /**
@@ -294,16 +294,23 @@ public class UserProcess {
 	}
 
 	// load sections
-	int fIndex = 0;
-	for (int s=0; s<coff.getNumSections(); s++) {
-	    CoffSection section = coff.getSection(s);
+	pageTable = new TranslationEntry[numPages];
+	for(int i = 0 ; i < numPages ; ++ i){
+		// assuming pageTable[i].vpn == i anywhere
+		pageTable[i] = new TranslationEntry(i, requestedFrames[i], true,false,false,false);
+	}
+
+	int numSections = coff.getNumSections();
+	for (int s=0; s < numSections; s++) {
+	    CoffSection section = coff.getSection(s);q
 	    
 	    Lib.debug(dbgProcess, "\tinitializing " + section.getName()
 		      + " section (" + section.getLength() + " pages)");
 
 	    for (int i=0; i<section.getLength(); i++) {
-			int vpn = requestedFrames[fIndex++];
-			section.loadPage(i, vpn);
+			int vpn = s * numSections + i;
+			assert  pageTable[vpn].vpn == vpn; // make sure the rule is protected.
+			section.loadPage(vpn, pageTable[vpn].ppn);
 	    }
 	}
 	
