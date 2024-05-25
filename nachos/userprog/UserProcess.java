@@ -302,7 +302,7 @@ public class UserProcess {
 
 	int numSections = coff.getNumSections();
 	for (int s=0; s < numSections; s++) {
-	    CoffSection section = coff.getSection(s);q
+	    CoffSection section = coff.getSection(s);
 	    
 	    Lib.debug(dbgProcess, "\tinitializing " + section.getName()
 		      + " section (" + section.getLength() + " pages)");
