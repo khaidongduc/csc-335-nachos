@@ -196,7 +196,8 @@ public class UserProcess {
 	int amount = 0;
 	for(int i = 0 ; i < length ; ++ i) {
 		int _vaddr = vaddr + i;
-		int virtualPageNum = Processor.pageFromAddress(_vaddr), addressOffset = Processor.offsetFromAddress(_vaddr);
+		int virtualPageNum = Processor.pageFromAddress(_vaddr),
+				addressOffset = Processor.offsetFromAddress(_vaddr);
 		if(0 > virtualPageNum || virtualPageNum >= this.pageTable.length){
 			Lib.debug(dbgProcess, "virtual address out of bound for this process");
 			break;
@@ -333,16 +334,17 @@ public class UserProcess {
 	}
 
 	int numSections = coff.getNumSections();
-	for (int s=0; s < numSections; s++) {
+	for (int s = 0; s < numSections; s++) {
 	    CoffSection section = coff.getSection(s);
 	    
 	    Lib.debug(dbgProcess, "\tinitializing " + section.getName()
 		      + " section (" + section.getLength() + " pages)");
 
 	    for (int i=0; i<section.getLength(); i++) {
-			int vpn = s * numSections + i;
+			int vpn = section.getFirstVPN() + i;
 			assert  pageTable[vpn].vpn == vpn; // make sure the rule is protected.
-			section.loadPage(vpn, pageTable[vpn].ppn);
+			System.out.println(vpn + " " + pageTable[vpn].ppn);
+			section.loadPage(i, pageTable[vpn].ppn);
 	    }
 	}
 	
@@ -370,7 +372,7 @@ public class UserProcess {
 	Processor processor = Machine.processor();
 
 	// by default, everything's 0
-	for (int i=0; i<processor.numUserRegisters; i++)
+	for (int i=0; i < processor.numUserRegisters; i++)
 	    processor.writeRegister(i, 0);
 
 	// initialize PC and SP according
@@ -429,10 +431,10 @@ public class UserProcess {
 		return length;
 	}
 
-	private int handleExit(){
+	private int handleExit(int status){
 		unloadSections();
 		Kernel.kernel.terminate();
-		return 0;
+		return status;
 	}
 
 
@@ -485,7 +487,7 @@ public class UserProcess {
 	case syscallRead:
 		return handleRead(a0, a1, a2);
 	case syscallExit:
-		return handleExit();
+		return handleExit(a0);
 	default:
 	    Lib.debug(dbgProcess, "Unknown syscall " + syscall);
 	    Lib.assertNotReached("Unknown system call!");

@@ -150,7 +150,7 @@ public class UserKernel extends ThreadedKernel {
 		}
 		int[] res = new int[requested];
 		for (int i = 0 ; i < requested; ++ i) {
-			Integer frame = freeFrames.pollLast();
+			Integer frame = freeFrames.pollFirst();
 			assert frame != null;
 			res[i] = frame;
 		}
