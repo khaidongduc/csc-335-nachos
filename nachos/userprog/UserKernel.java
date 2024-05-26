@@ -1,16 +1,14 @@
 package nachos.userprog;
 
-import com.sun.source.tree.Tree;
-import nachos.machine.*;
-import nachos.threads.*;
-import nachos.userprog.*;
+import nachos.machine.Coff;
+import nachos.machine.Lib;
+import nachos.machine.Machine;
+import nachos.machine.Processor;
+import nachos.threads.KThread;
+import nachos.threads.Lock;
+import nachos.threads.ThreadedKernel;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
+import java.util.*;
 import java.util.stream.IntStream;
 
 /**
@@ -39,11 +37,12 @@ public class UserKernel extends ThreadedKernel {
 
 	int numPhysPages = Machine.processor().getNumPhysPages(); // number of physical frames
 		// propagate this.freeFrames with {0, 2, ..., <numPhysPages> - 1}
-	freeFrames = new TreeSet<>();
-	for(int i = 0 ; i < numPhysPages ; ++ i){
-		freeFrames.add(i);
-	}
+
+	freeFrames = new LinkedList<>();
+	for(int i = 0 ; i < numPhysPages ; ++ i) freeFrames.add(i);
+	Collections.shuffle(freeFrames); // to make the program assign random frame to page
 	freeFrameLock = new Lock();
+
     }
 
     /**
@@ -133,7 +132,7 @@ public class UserKernel extends ThreadedKernel {
 
 	///////////////////////////////////////////////////////////////////////////
 
-	private static TreeSet<Integer> freeFrames;
+	private static List<Integer> freeFrames;
 	private static Lock freeFrameLock;
 
 	/**
@@ -151,7 +150,8 @@ public class UserKernel extends ThreadedKernel {
 		}
 		int[] res = new int[requested];
 		for (int i = 0 ; i < requested; ++ i) {
-			Integer frame = freeFrames.pollFirst();
+			Integer frame = freeFrames.get(0);
+			freeFrames.remove(frame);
 			assert frame != null;
 			res[i] = frame;
 		}
