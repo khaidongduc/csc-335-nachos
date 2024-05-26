@@ -63,7 +63,8 @@ public class UserKernel extends ThreadedKernel {
 	}
 	while (c != 'q');
 
-	System.out.println("");
+	console.readByte(false); // get rid of the extra endline
+
     }
 
     /**
