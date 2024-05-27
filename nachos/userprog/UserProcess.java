@@ -343,7 +343,7 @@ public class UserProcess {
 	    for (int i=0; i<section.getLength(); i++) {
 			int vpn = section.getFirstVPN() + i;
 			assert  pageTable[vpn].vpn == vpn; // make sure the rule is protected.
-			System.out.println(vpn + " " + pageTable[vpn].ppn);
+			// System.out.println(vpn + " " + pageTable[vpn].ppn);
 			section.loadPage(i, pageTable[vpn].ppn);
 	    }
 	}
