@@ -1,5 +1,6 @@
 /*
  *  Extra testing
+ *  Author: dongk@union.edu
  */
 
 #include "stdlib.h"
@@ -7,8 +8,8 @@
 #define BUFFERSIZE	30
 
 int mat_power(int* res, int* accum, int n){
-   int a0 = accum[0], a1 = accum[1], a2 = accum[2], a3 = accum[3];
     while(n > 0){
+        int a0 = accum[0], a1 = accum[1], a2 = accum[2], a3 = accum[3];
         if(n & 1){
             // res *= accum
             int r0 = res[0], r1 = res[1], r2 = res[2], r3 = res[3];
@@ -32,16 +33,16 @@ int main(int argc, char *argv[]) {
     char buffer[BUFFERSIZE];
     int f1, f2, n;
 
-    printf("%s", "f(1): ");
+    printf("f(1): ");
     readline(buffer, BUFFERSIZE);
     f1 = atoi(buffer);
 
 
-    printf("%s", "f(2): ");
+    printf("f(2): ");
     readline(buffer, BUFFERSIZE);
     f2 = atoi(buffer);
 
-    printf("%s", "n: ");
+    printf("n: ");
     readline(buffer, BUFFERSIZE);
     n = atoi(buffer);
 
@@ -56,10 +57,10 @@ int main(int argc, char *argv[]) {
     else {
         int pow[4] = {1, 0, 0, 1};
         int accum[4] = {1, 1, 1, 0};
-        mat_power(pow, accum, n);
+        mat_power(pow, accum, n - 2);
         answer = pow[0] * f1 + pow[1] * f2;
     }
-
-    printf("f(%d): %d", n, answer);
+    printf("f(%d): %d\n", n, answer);
     return 0;
 }
+
