@@ -137,9 +137,13 @@ public class UserProcess {
 
 	byte[] memory = Machine.processor().getMemory();
 	int amount = 0;
-	for(int i = 0 ; i < length ; ++ i) {
-		int _vaddr = vaddr + i;
-		int virtualPageNum = Processor.pageFromAddress(_vaddr), addressOffset = Processor.offsetFromAddress(_vaddr);
+	int start_vaddr = vaddr;
+	int end_vaddr = vaddr + length; // exclusive
+
+	for(vaddr = start_vaddr ; vaddr < end_vaddr ;) {
+		int virtualPageNum = Processor.pageFromAddress(vaddr),
+				addressOffset = Processor.offsetFromAddress(vaddr);
+
 		if(0 > virtualPageNum || virtualPageNum >= this.pageTable.length){
 			Lib.debug(dbgProcess, "virtual address out of bound for this process");
 			break;
@@ -153,10 +157,20 @@ public class UserProcess {
 			break; // not gonna happen in this implementation since we are loading all of program into memory
 		}
 		assert this.pageTable[virtualPageNum].vpn == virtualPageNum;
+
+		int endOfPageVaddr = Processor.makeAddress(virtualPageNum + 1, 0) - 1;
+		int continuousLength = Math.min(endOfPageVaddr, end_vaddr - 1) - vaddr + 1;
+
 		int physicalPage = this.pageTable[virtualPageNum].ppn;
-		int _paddr = Processor.makeAddress(physicalPage, addressOffset);
-		data[offset + i] = memory[_paddr];
-		++ amount;
+		int paddr = Processor.makeAddress(physicalPage, addressOffset);
+
+		System.arraycopy(memory, paddr,
+				data, offset + amount,
+				continuousLength);
+
+		amount += continuousLength;
+		vaddr += continuousLength;
+		// System.out.println("Read from physical page " + physicalPage);
 	}
 	return amount;
     }
@@ -194,10 +208,13 @@ public class UserProcess {
 
 	byte[] memory = Machine.processor().getMemory();
 	int amount = 0;
-	for(int i = 0 ; i < length ; ++ i) {
-		int _vaddr = vaddr + i;
-		int virtualPageNum = Processor.pageFromAddress(_vaddr),
-				addressOffset = Processor.offsetFromAddress(_vaddr);
+	int start_vaddr = vaddr;
+	int end_vaddr = vaddr + length; // exclusive
+
+	for(vaddr = start_vaddr ; vaddr < end_vaddr ;) {
+		int virtualPageNum = Processor.pageFromAddress(vaddr),
+				addressOffset = Processor.offsetFromAddress(vaddr);
+
 		if(0 > virtualPageNum || virtualPageNum >= this.pageTable.length){
 			Lib.debug(dbgProcess, "virtual address out of bound for this process");
 			break;
@@ -211,10 +228,20 @@ public class UserProcess {
 			break; // not gonna happen in this implementation since we are loading all of program into memory
 		}
 		assert this.pageTable[virtualPageNum].vpn == virtualPageNum;
+
+		int endOfPageVaddr = Processor.makeAddress(virtualPageNum + 1, 0) - 1;
+		int continuousLength = Math.min(endOfPageVaddr, end_vaddr - 1) - vaddr + 1;
+
 		int physicalPage = this.pageTable[virtualPageNum].ppn;
-		int _paddr = Processor.makeAddress(physicalPage, addressOffset);
-		memory[_paddr] = data[offset + i];
-		++ amount;
+		int paddr = Processor.makeAddress(physicalPage, addressOffset);
+
+		System.arraycopy(data, offset + amount,
+				memory, paddr,
+				continuousLength);
+
+		amount += continuousLength;
+		vaddr += continuousLength;
+		//System.out.println("Write to physical page " + physicalPage);
 	}
 	return amount;
     }
