@@ -170,6 +170,9 @@ public class UserKernel extends ThreadedKernel {
 		freeFrames.add(frameNumber);
 
 		freeFrameLock.release();
+
+		System.out.println("Frame " + frameNumber + " freed");
+
 	}
 
 }

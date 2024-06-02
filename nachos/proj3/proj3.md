@@ -39,3 +39,6 @@ too large of a number can't be stored in `int`.
 
 The Fibonacci sequence up to the 8th number is `1 1 2 3 5 8 13 21`
 ![](imgs/fib.png)
+
+If given a number less than 1, exit the program. Test system call `exit()`.
+![](imgs/fib_invalid.png)
