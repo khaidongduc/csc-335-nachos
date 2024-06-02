@@ -4,11 +4,13 @@ import nachos.machine.Coff;
 import nachos.machine.Lib;
 import nachos.machine.Machine;
 import nachos.machine.Processor;
+import nachos.threads.DLList;
 import nachos.threads.KThread;
 import nachos.threads.Lock;
 import nachos.threads.ThreadedKernel;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 
 /**
@@ -38,10 +40,8 @@ public class UserKernel extends ThreadedKernel {
 	int numPhysPages = Machine.processor().getNumPhysPages(); // number of physical frames
 		// propagate this.freeFrames with {0, 2, ..., <numPhysPages> - 1}
 
-	freeFrames = new LinkedList<>();
-	for(int i = 0 ; i < numPhysPages ; ++ i) freeFrames.add(i);
-	Collections.shuffle(freeFrames); // to make the program assign random frame to page
-	freeFrameLock = new Lock();
+	freeFrames = new DLList();
+	for(int i = 0 ; i < numPhysPages ; ++ i) freeFrames.insert(i, ThreadLocalRandom.current().nextInt());
 
     }
 
@@ -132,8 +132,7 @@ public class UserKernel extends ThreadedKernel {
 
 	///////////////////////////////////////////////////////////////////////////
 
-	private static List<Integer> freeFrames;
-	private static Lock freeFrameLock;
+	private static DLList freeFrames;
 
 	/**
 	 * return a list of <requested> free frame numbers that can be used for a process
@@ -141,22 +140,18 @@ public class UserKernel extends ThreadedKernel {
 	 * @return array of frame numbers that the process can use or null
 	 * if request cannot be fulfilled */
 	public static int[] allocatePages(int requested) {
-		freeFrameLock.acquire();
 
 		int numAvailableFrames = freeFrames.size();
 		if(numAvailableFrames < requested) {
-			freeFrameLock.release();
 			return null;
 		}
 		int[] res = new int[requested];
 		for (int i = 0 ; i < requested; ++ i) {
-			Integer frame = freeFrames.get(0);
-			freeFrames.remove(frame);
+			Integer frame = (Integer) freeFrames.removeHead();
 			assert frame != null;
 			res[i] = frame;
 		}
 
-		freeFrameLock.release();
 		return res;
 	}
 
@@ -164,12 +159,8 @@ public class UserKernel extends ThreadedKernel {
 	 * put frameNumber back in the free frames list
  	 */
 	public static void releasePage(int frameNumber){
-		freeFrameLock.acquire();
 
-		assert !freeFrames.contains(frameNumber);
-		freeFrames.add(frameNumber);
-
-		freeFrameLock.release();
+		freeFrames.insert(frameNumber, ThreadLocalRandom.current().nextInt());
 
 		System.out.println("Frame " + frameNumber + " freed");
 
