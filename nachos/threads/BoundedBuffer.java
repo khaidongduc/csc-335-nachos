@@ -31,7 +31,7 @@ public class BoundedBuffer {
 
         KThread.yieldIfOughtTo();
 
-        if(this.buffer.isEmpty()) {
+        while(this.buffer.isEmpty()) {
             this.empty.sleep(); // wait if there is nothing in the buffer
         }
         Character res = this.buffer.poll();
@@ -51,7 +51,7 @@ public class BoundedBuffer {
 
         KThread.yieldIfOughtTo();
 
-        if(this.buffer.size() == this.maxsize){
+        while(this.buffer.size() == this.maxsize){
             this.full.sleep();
         }
 
